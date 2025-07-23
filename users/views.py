@@ -1,12 +1,14 @@
 from django.shortcuts import render
 from rest_framework import generics, permissions
 from rest_framework.views import APIView
-from .serializers import UserProfileSerializer
+
 from rest_framework.response import Response
-from .serializers import RegisterSerializer
+from .serializers import RegisterSerializer,UserProfileSerializer
 from django.contrib.auth import get_user_model
 from rest_framework import status
 User = get_user_model()
+
+
 class UserProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = UserProfileSerializer
     permission_classes = [permissions.IsAuthenticated]
