@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 def custom_exception_handler(exc, context):
-    # Call REST framework's default exception handler first
+  
     response = drf_exception_handler(exc, context)
 
     if response is not None:
@@ -24,7 +24,7 @@ def custom_exception_handler(exc, context):
             "data": None
         }, status=response.status_code)
 
-    # Handle non-DRF exceptions (like 500 server error)
+    
     return Response({
         "success": False,
         "message": "A server error occurred.",
