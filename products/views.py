@@ -44,3 +44,6 @@ def recommended_products(request, product_id):
     recommended_items = Product.objects.filter(id__in=recommended_ids)
     serializer = ProductSerializer(recommended_items, many=True)
     return Response(serializer.data)
+
+
+

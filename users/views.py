@@ -10,6 +10,8 @@ from utils.response import success_response
 User = get_user_model()
 from utils.exceptions import custom_exception_handler
 
+from django.contrib.auth import authenticate, login, logout
+
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = UserProfileSerializer
@@ -38,9 +40,49 @@ class RegisterView(generics.CreateAPIView):
         print("Registering user with data:", request.data)
         context = {'request': request}
         try:
-            print("Registering user with data:", request.data)
+            
             response = super().create(request, *args, **kwargs)
             return success_response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
         except Exception as e:
             print(f"Error during registration: {e}")
             return custom_exception_handler(e, context)
+        
+class LoginView(APIView):
+    permission_classes = []
+
+    def post(self, request):
+        email = request.data.get('email') or request.POST.get('email')
+        password = request.data.get('password')
+
+        if not email or not password:
+            return Response(
+                {"error": "Email and password are required."},
+            
+            )
+        try:
+            user_obj = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({"error": "Invalid email or password"}, status=401)
+
+        user = authenticate(request, username=user_obj.username, password=password)
+        if user:
+            login(request, user)  
+            return success_response(
+                "Login successful",
+                data={
+                    "id": user.id,
+                    "username": user.username,
+                    "email": user.email,
+                }
+            )
+        else:
+            return Response({"error": "Invalid email or password"}, status=401)
+class LogoutView(APIView):
+    permission_classes = []
+
+    def post(self, request):
+        if request.user.is_authenticated:
+            logout(request)  # Clear session
+            return success_response("Logout successful")
+        else:
+            return Response({"error": "You are not logged in"}, status=400)

@@ -6,3 +6,4 @@ urlpatterns = [
     path('cart-items/', CartItemListCreate.as_view(), name='cart-item'),
     path('cart-items/<int:pk>/', CartItemDetail.as_view(), name='cartitem-detail'),
 ]
+A
